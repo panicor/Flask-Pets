@@ -26,26 +26,34 @@ def home():
 @app.route("/add", methods=["GET", "POST"])
 def add_pet():
     """Add a pet."""
+    
     form = AddPetForm()
 
-    data = {k: v for k, v in form.data.items() if k != "csrf_token"}
-
-    new_pet = Pet(**data)
-
-    db.session.add(new_pet)
-    db.session.commit()
-
-    flash(f"{new_pet.name} added")
-
     if form.validate_on_submit():
+        name  = form.name.data
+        species = form.species.data
+        image_url = form.image_url.data
+        age = form.age.data
+        notes = form.notes.data
+        available = form.available.data
+
+        new_pet = Pet(name=name, species=species, image_url=image_url, age=age, notes=notes, available=available)
+
+        db.session.add(new_pet)
+        db.session.commit()
+
+        flash(f"{new_pet.name} added")
+
         return redirect(url_for('list_pets'))
+    
     else:
-        return render_template("pet_add_form.html",  form=form) 
+        return render_template("pet_add_form.html", form=form) 
+    # return render_template("pet_list.html")
 
 @app.route("/<int:pet_id>", methods=["GET", "POST"])
 def edit_pet(pet_id):
     """Edit a pet."""
-    
+
     pet = Pet.query.get_or_404(pet_id)
     form = EditPetForm(obj=pet)
 

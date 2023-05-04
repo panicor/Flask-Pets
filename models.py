@@ -16,4 +16,7 @@ class Pet(db.Model):
     notes = db.Column(db.Text)
     available = db.Column(db.Boolean, nullable=False, default=True)
 
-    
+def connect_db(app):
+    db.app = app 
+    db.init_app(app)
+
